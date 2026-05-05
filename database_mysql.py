@@ -214,8 +214,9 @@ def save_pipeline_result(project_id, data: dict):
             model_accuracy, model_precision, model_recall, model_f1,
             model_r2, model_mse, model_mae,
             chart_labels, chart_data, chart_column,
-            target_column, feature_importance
-        ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            target_column, feature_importance,
+            boxplot_data, correlation_data
+        ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         """,
         (
             project_id,
@@ -236,6 +237,8 @@ def save_pipeline_result(project_id, data: dict):
             data.get("chart_column", ""),
             data.get("target_column", ""),
             json.dumps(data.get("feature_importance", {})),
+            json.dumps(data.get("boxplot_data", [])),
+            json.dumps(data.get("correlation_data", [])),
         )
     )
     conn.commit()
@@ -254,7 +257,7 @@ def get_pipeline_result(project_id):
     cursor.close()
     conn.close()
     if row:
-        for field in ["chart_labels", "chart_data", "feature_importance"]:
+        for field in ["chart_labels", "chart_data", "feature_importance", "boxplot_data", "correlation_data"]:
             if row.get(field):
                 try:
                     row[field] = json.loads(row[field])

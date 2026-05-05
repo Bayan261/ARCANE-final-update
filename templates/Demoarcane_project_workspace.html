@@ -387,20 +387,53 @@
             box-shadow: 0 0 0 4px rgba(102,126,234,0.12);
         }
 
-        .checkbox {
+        .prep-step {
             display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 11px 14px;
             border-radius: 12px;
-            border: 2px solid #e2e8f0;
-            background: #f8fafc;
-            margin-bottom: 10px;
+            border: 1.5px solid #bbf7d0;
+            background: linear-gradient(135deg, #f0fdf4, #f8fff9);
+            margin-bottom: 8px;
         }
 
-        .checkbox input { width: 18px; height: 18px; }
-        .checkbox .label { font-weight: 900; font-size: 13px; color: #0f172a; }
-        .checkbox .hint { font-size: 12px; color: #64748b; margin-top: 2px; }
+        .prep-step-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: #16a34a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .prep-step-soon {
+            border-color: #e2e8f0;
+            background: #f8fafc;
+            opacity: 0.65;
+        }
+
+        .prep-step-soon .prep-step-icon {
+            background: #94a3b8;
+        }
+
+        .prep-step .label { font-weight: 900; font-size: 13px; color: #0f172a; display: flex; align-items: center; gap: 6px; }
+        .prep-step .hint { font-size: 12px; color: #64748b; margin-top: 3px; }
+
+        .auto-badge {
+            padding: 1px 7px;
+            background: #dcfce7;
+            color: #16a34a;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 900;
+            border: 1px solid #bbf7d0;
+            white-space: nowrap;
+        }
 
         .actions {
             display: flex;
@@ -683,9 +716,9 @@
                             <div class="card-subtitle" data-ar="خطوات المعالجة المطبّقة تلقائياً على بياناتك." data-en="Preprocessing steps applied automatically to your dataset.">Preprocessing steps applied automatically to your dataset.</div>
                         </div>
                         {% if pipeline_done %}
-                            <span class="badge badge-ok">✅ Done</span>
+                            <span class="badge badge-ok" data-ar="✅ مُطبَّق" data-en="✅ Applied">✅ Applied</span>
                         {% else %}
-                            <span class="badge badge-warn">⚠️ Pending</span>
+                            <span class="badge" style="background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe;" data-ar="🔄 تلقائي" data-en="🔄 Auto">🔄 Auto</span>
                         {% endif %}
                     </div>
 
@@ -703,59 +736,71 @@
                     </div>
                     {% endif %}
 
-                    <form method="POST" action="{{ preprocess_action | default('#') }}">
-                        <div class="checkbox">
-                            <input type="checkbox" name="handle_missing" checked />
-                            <div>
-                                <div class="label" data-ar="معالجة القيم المفقودة" data-en="Handle Missing Values">Handle Missing Values</div>
-                                <div class="hint" data-ar="حذف الصفوف أو تعبئة القيم (سنختار أبسط طريقة لاحقاً)." data-en="Drop rows or fill values (we'll choose the simplest method later).">Drop rows or fill values (we'll choose the simplest method later).</div>
-                            </div>
-                        </div>
+                    <div style="margin-bottom:12px; padding:8px 12px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe; font-size:12px; color:#1d4ed8; font-weight:600;">
+                        <span data-ar="🔄 يتم تطبيق هذه الخطوات تلقائياً عند تشغيل المسار" data-en="🔄 These steps are applied automatically when the pipeline runs">🔄 These steps are applied automatically when the pipeline runs</span>
+                    </div>
 
-                        <div class="checkbox">
-                            <input type="checkbox" name="remove_duplicates" checked />
-                            <div>
-                                <div class="label" data-ar="إزالة التكرارات" data-en="Remove Duplicates">Remove Duplicates</div>
-                                <div class="hint" data-ar="حذف الصفوف المكررة للحصول على تحليل أنظف." data-en="Remove duplicate rows for cleaner analysis.">Remove duplicate rows for cleaner analysis.</div>
+                    <!-- Step 1: Handle Missing Values -->
+                    <div class="prep-step">
+                        <div class="prep-step-icon">✓</div>
+                        <div style="flex:1;">
+                            <div class="label">
+                                <span data-ar="معالجة القيم المفقودة" data-en="Handle Missing Values">Handle Missing Values</span>
+                                <span class="auto-badge" data-ar="تلقائي" data-en="Auto">Auto</span>
                             </div>
+                            <div class="hint" data-ar="حذف الصفوف أو تعبئة القيم الفارغة تلقائياً." data-en="Automatically drop or fill empty values.">Automatically drop or fill empty values.</div>
                         </div>
+                    </div>
 
-                        <div class="checkbox">
-                            <input type="checkbox" name="correlation_analysis" checked />
-                            <div>
-                                <div class="label" data-ar="تحليل الارتباط" data-en="Correlation Analysis">Correlation Analysis</div>
-                                <div class="hint" data-ar="حساب الارتباط بين المتغيرات الرقمية — موجب: علاقة طردية، سالب: علاقة عكسية، صفر: لا توجد علاقة." data-en="Compute correlations between numeric variables — positive: direct relationship, negative: inverse, zero: no relationship.">Compute correlations between numeric variables — positive: direct relationship, negative: inverse, zero: no relationship.</div>
+                    <!-- Step 2: Remove Duplicates -->
+                    <div class="prep-step">
+                        <div class="prep-step-icon">✓</div>
+                        <div style="flex:1;">
+                            <div class="label">
+                                <span data-ar="إزالة التكرارات" data-en="Remove Duplicates">Remove Duplicates</span>
+                                <span class="auto-badge" data-ar="تلقائي" data-en="Auto">Auto</span>
                             </div>
+                            <div class="hint" data-ar="حذف الصفوف المكررة للحصول على تحليل أنظف." data-en="Remove duplicate rows for cleaner analysis.">Remove duplicate rows for cleaner analysis.</div>
                         </div>
+                    </div>
 
-                        <div class="checkbox" style="opacity:0.75;">
-                            <input type="checkbox" disabled />
-                            <div>
-                                <div class="label" data-ar="اكتشاف القيم الشاذة" data-en="Outlier Detection">Outlier Detection<span class="badge badge-soon" data-ar="قريباً" data-en="Soon" style="margin-right:8px;">Outlier Detection</span></div>
-                                <div class="hint" data-ar="ميزة متقدمة اختيارية." data-en="Advanced optional feature.">Advanced optional feature.</div>
+                    <!-- Step 3: Outlier Detection (coming soon) -->
+                    <div class="prep-step prep-step-soon">
+                        <div class="prep-step-icon" style="font-size:13px;">⏳</div>
+                        <div style="flex:1;">
+                            <div class="label">
+                                <span data-ar="اكتشاف القيم الشاذة" data-en="Outlier Detection">Outlier Detection</span>
+                                <span class="badge badge-soon" data-ar="قريباً" data-en="Soon" style="font-size:10px;">Soon</span>
                             </div>
+                            <div class="hint" data-ar="اكتشاف وحذف القيم المتطرفة — ميزة متقدمة قادمة." data-en="Detect and remove extreme outliers — advanced feature coming soon.">Detect and remove extreme outliers — advanced feature coming soon.</div>
                         </div>
+                    </div>
 
-                        <div class="actions">
-                            <button class="btn btn-primary" type="submit"
-                                    {% if not dataset_uploaded %} disabled style="opacity:0.6; cursor:not-allowed;" {% endif %}
-                                    onclick="return confirm(currentLang==='ar'?'سيتم ربط مسار المعالجة لاحقاً ✅':'Preprocessing route will be connected later ✅')">
-                                <span data-ar="تطبيق المعالجة" data-en="Apply Preprocessing">Apply Preprocessing</span>
-                            </button>
-                            <button class="btn btn-outline" type="button"
-                                    {% if not dataset_uploaded %} disabled style="opacity:0.6; cursor:not-allowed;" {% endif %}
-                                    onclick="alert(currentLang==='ar'?'إعادة الضبط (تجريبي) ✅':'Reset (demo) ✅')">
-                                <span data-ar="إعادة الضبط" data-en="Reset">Reset</span>
-                            </button>
-                        </div>
+                    <!-- Divider: EDA step -->
+                    <div style="display:flex; align-items:center; gap:8px; margin:10px 0 8px;">
+                        <div style="flex:1; height:1px; background:#e2e8f0;"></div>
+                        <span style="font-size:10px; font-weight:800; color:#8b5cf6; background:#f5f3ff; border:1px solid #ddd6fe; padding:2px 8px; border-radius:999px; white-space:nowrap;" data-ar="تحليل استكشافي" data-en="EDA Step">EDA Step</span>
+                        <div style="flex:1; height:1px; background:#e2e8f0;"></div>
+                    </div>
 
-                        {% if preprocess_message %}
-                            <div style="margin-top:12px;">
-                                <span class="badge badge-ok">✅</span>
-                                <span class="muted">{{ preprocess_message }}</span>
+                    <!-- Step 4: Correlation Analysis (EDA) -->
+                    <div class="prep-step" style="border-color:#ddd6fe; background:linear-gradient(135deg,#faf5ff,#f5f3ff);">
+                        <div class="prep-step-icon" style="background:#7c3aed;">✓</div>
+                        <div style="flex:1;">
+                            <div class="label">
+                                <span data-ar="تحليل الارتباط" data-en="Correlation Analysis">Correlation Analysis</span>
+                                <span class="auto-badge" style="background:#ede9fe; color:#6d28d9; border-color:#ddd6fe;" data-ar="تلقائي" data-en="Auto">Auto</span>
                             </div>
-                        {% endif %}
-                    </form>
+                            <div class="hint" data-ar="حساب الارتباط بين المتغيرات الرقمية — موجب: طردي، سالب: عكسي، صفر: لا علاقة." data-en="Compute correlations between numeric variables — positive: direct, negative: inverse, zero: none.">Compute correlations between numeric variables — positive: direct, negative: inverse, zero: none.</div>
+                        </div>
+                    </div>
+
+                    {% if preprocess_message %}
+                        <div style="margin-top:12px;">
+                            <span class="badge badge-ok">✅</span>
+                            <span class="muted">{{ preprocess_message }}</span>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
 
@@ -859,7 +904,6 @@
 
 
             <!-- Box Plots -->
-            {% if pipeline_done and boxplot_data %}
             <div class="grid" style="margin-top:0;">
                 <div class="card" style="grid-column: span 12;">
                     <div class="card-header">
@@ -867,8 +911,13 @@
                             <div class="card-title" data-ar="٢ج) مخططات الصندوق (Box Plots)" data-en="2c) Box Plots">2c) Box Plots</div>
                             <div class="card-subtitle" data-ar="توزيع القيم الرقمية: الوسيط، الربيعيات، والقيم الشاذة." data-en="Numeric distribution: median, quartiles, and outlier range.">Numeric distribution: median, quartiles, and outlier range.</div>
                         </div>
-                        <span class="badge badge-ok">✅ Done</span>
+                        {% if pipeline_done and boxplot_data %}
+                            <span class="badge badge-ok">✅ Done</span>
+                        {% else %}
+                            <span class="badge" style="background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe;" data-ar="⏳ في الانتظار" data-en="⏳ Pending">⏳ Pending</span>
+                        {% endif %}
                     </div>
+                    {% if pipeline_done and boxplot_data %}
                     <div style="display:flex; flex-wrap:wrap; gap:24px; margin-top:8px; align-items:flex-end;">
                         {% for bp in boxplot_data %}
                         <div style="flex:1; min-width:160px; max-width:240px;">
@@ -896,9 +945,23 @@
                         </div>
                         {% endfor %}
                     </div>
+                    {% else %}
+                    <div style="display:flex; align-items:center; justify-content:center; gap:12px; padding:32px 0; color:#94a3b8;">
+                        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" style="opacity:0.35;">
+                            <rect x="8" y="10" width="20" height="16" rx="2" stroke="#667eea" stroke-width="2" fill="#e0e7ff"/>
+                            <line x1="18" y1="4" x2="18" y2="30" stroke="#cbd5e1" stroke-width="1.5"/>
+                            <line x1="12" y1="4" x2="24" y2="4" stroke="#94a3b8" stroke-width="1.5"/>
+                            <line x1="12" y1="30" x2="24" y2="30" stroke="#94a3b8" stroke-width="1.5"/>
+                            <line x1="8" y1="18" x2="28" y2="18" stroke="#667eea" stroke-width="2"/>
+                        </svg>
+                        <div>
+                            <div style="font-size:13px; font-weight:600; color:#64748b;" data-ar="ستظهر المخططات بعد تشغيل المسار" data-en="Charts will appear after running the pipeline">Charts will appear after running the pipeline</div>
+                            <div style="font-size:11px; color:#94a3b8; margin-top:3px;" data-ar="يتم حساب الوسيط والربيعيات والقيم الشاذة تلقائياً" data-en="Median, quartiles, and outliers are computed automatically">Median, quartiles, and outliers are computed automatically</div>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
-            {% endif %}
 
             <!-- نتائج نموذج التعلم الآلي -->
             {% if pipeline_done and result %}
@@ -1018,59 +1081,84 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <script>
         // رسم بياني لتوزيع التحليل الاستكشافي
+        let arcaneChartInstance = null;
         (function () {
             const hasData = {{ 'true' if chart_data else 'false' }};
             const labels  = hasData ? {{ chart_labels | safe }} : ['A','B','C','D','E'];
             const data    = hasData ? {{ chart_data   | safe }} : [4,7,3,9,5];
             const ctx = document.getElementById('arcaneChart');
             if (!ctx) return;
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: '{{ chart_column | replace("_", " ") | title | default("Value") }}',
-                        data: data,
-                        backgroundColor: 'rgba(102,126,234,0.7)',
-                        borderColor: '#667eea',
-                        borderWidth: 2,
-                        borderRadius: 5,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: true },
-                        title: {
-                            display: true,
-                            text: 'Distribution of {{ chart_column | replace("_", " ") | title | default("Selected Column") }}',
-                            font: { size: 14, weight: 'bold' },
-                            color: '#0f172a',
-                            padding: { bottom: 10 }
-                        }
+
+            function buildArcaneChart(lang) {
+                const isAr = lang === 'ar';
+                const numLocale = isAr ? 'ar-SA' : 'en-US';
+                if (arcaneChartInstance) { arcaneChartInstance.destroy(); }
+                arcaneChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '{{ chart_column | replace("_", " ") | title | default("Value") }}',
+                            data: data,
+                            backgroundColor: 'rgba(102,126,234,0.7)',
+                            borderColor: '#667eea',
+                            borderWidth: 2,
+                            borderRadius: 5,
+                        }]
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: true },
                             title: {
                                 display: true,
-                                text: 'Count',
-                                font: { size: 12 },
-                                color: '#64748b'
+                                text: isAr
+                                    ? 'توزيع: {{ chart_column | replace("_", " ") | default("العمود المحدد") }}'
+                                    : 'Distribution of {{ chart_column | replace("_", " ") | title | default("Selected Column") }}',
+                                font: { size: 14, weight: 'bold' },
+                                color: '#0f172a',
+                                padding: { bottom: 10 }
                             }
                         },
-                        x: {
-                            title: {
-                                display: true,
-                                text: '{{ chart_column | replace("_", " ") | title | default("Value") }}',
-                                font: { size: 12 },
-                                color: '#64748b'
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: isAr ? 'العدد' : 'Count',
+                                    font: { size: 12 },
+                                    color: '#64748b'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return Number(value).toLocaleString(numLocale);
+                                    }
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: isAr
+                                        ? '{{ chart_column | replace("_", " ") | default("القيمة") }}'
+                                        : '{{ chart_column | replace("_", " ") | title | default("Value") }}',
+                                    font: { size: 12 },
+                                    color: '#64748b'
+                                }
                             }
                         }
                     }
-                }
-            });
+                });
+            }
+
+            // Expose rebuild function for language switching
+            window._rebuildArcaneChart = buildArcaneChart;
+            // Build initial chart after DOM + Chart.js ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => buildArcaneChart('en'));
+            } else {
+                buildArcaneChart('en');
+            }
         })();
 
         // Feature Importance Chart
@@ -1251,6 +1339,11 @@
             document.querySelectorAll('table td[data-ar][data-en]').forEach(el => {
                 el.textContent = isAr ? el.dataset.ar : el.dataset.en;
             });
+
+            // Rebuild EDA chart with correct locale for Y-axis numbers
+            if (typeof window._rebuildArcaneChart === 'function') {
+                window._rebuildArcaneChart(lang);
+            }
         }
     </script>
 
