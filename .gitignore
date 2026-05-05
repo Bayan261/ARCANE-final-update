@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 .env
 static/uploads/
+.DS_Store
